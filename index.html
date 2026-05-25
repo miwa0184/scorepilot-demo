@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="sv"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ScorePilot">
+<meta name="theme-color" content="#185fa5">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23185fa5'/%3E%3Ctext x='32' y='43' font-size='30' font-family='Helvetica' font-weight='bold' fill='white' text-anchor='middle'%3EHP%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23185fa5'/%3E%3Ctext x='32' y='43' font-size='30' font-family='Helvetica' font-weight='bold' fill='white' text-anchor='middle'%3EHP%3C/text%3E%3C/svg%3E">
+<title>HP ScorePilot</title>
+<style>
+:root{--bg:#f4f3ef;--card:#fff;--ink:#1c1c1a;--muted:#6f6e68;--line:#e6e4dd;--accent:#185fa5;--accent-bg:#eaf1fb;
+--ok:#0f6e56;--ok-bg:#e4f5ee;--warm:#8a5a1c;--warm-bg:#faf1e0;--root:#534ab7;--root-bg:#eeedfe;}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);line-height:1.5}
+.phone{max-width:480px;margin:0 auto;background:var(--card);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;padding:max(16px,env(safe-area-inset-top)) 20px 10px;border-bottom:1px solid var(--line)}
+.brand{font-weight:600;font-size:15px}
+.prog{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.body{padding:20px;flex:1}
+.subtag{display:inline-block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--accent-bg);border-radius:6px;padding:3px 9px;margin-bottom:12px;font-weight:600}
+.stem{font-size:19px;font-weight:600;margin:0 0 6px;line-height:1.35}
+.hint{font-size:13.5px;color:#3b3a36;margin:0 0 14px}
+.hint b{font-weight:600}
+.passage{font-size:13.5px;color:#3b3a36;background:#faf9f6;border:1px solid var(--line);border-radius:10px;padding:12px 13px;margin:0 0 14px;max-height:210px;overflow:auto;line-height:1.5}
+.passage p{margin:0 0 8px}.passage b{font-weight:600}
+table.dtk{width:100%;border-collapse:collapse;font-size:14px;margin:0 0 14px}
+table.dtk td,table.dtk th{border:1px solid var(--line);padding:7px 10px;text-align:left}
+table.dtk th{background:#faf9f6}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 15px;margin-bottom:9px;font-size:15.5px;cursor:pointer;transition:border-color .12s,background .12s;color:var(--ink)}
+.opt:active{background:#f3f1ec}
+.opt .lab{font-weight:600;color:var(--muted);margin-right:9px}
+.opt.dim{opacity:.4}
+.opt.picked-wrong{border-color:var(--warm);background:var(--warm-bg)}
+.opt.is-correct{border-color:var(--ok);background:var(--ok-bg)}
+.fb{margin-top:6px;border-radius:14px;padding:16px 16px 6px;background:#fbfaf7;border:1px solid var(--line);animation:rise .18s ease}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.fb.correct{background:var(--ok-bg);border-color:#bfe6d6}
+.hero{font-size:17px;font-weight:600;margin:0 0 8px;line-height:1.35}
+.err{font-size:15px;margin:0 0 10px}
+.rightline{font-size:13px;color:var(--muted);margin:0 0 10px}
+.rightline b{color:var(--ink)}
+.nextrule{font-size:15px;margin:0 0 14px;padding-left:11px;border-left:3px solid var(--root);color:#332e6b}
+.show{background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;padding:0 0 12px}
+.deep{display:none;border-top:1px dashed var(--line);padding-top:12px;margin-bottom:6px}
+.deep.open{display:block;animation:rise .18s ease}
+.deep .steps{font-size:14.5px;margin:0 0 10px;line-height:1.6}
+.deep .tt{font-size:13.5px;color:#0f6e56;background:var(--ok-bg);border-radius:9px;padding:9px 11px;margin:0}
+.cta{display:block;width:100%;background:var(--ink);color:#fff;border:none;border-radius:13px;padding:15px;font-size:15.5px;font-weight:600;cursor:pointer;margin-top:6px}
+.cta:active{opacity:.85}
+.end{text-align:center;padding:40px 14px}
+.end h2{font-size:22px;margin:0 0 8px}
+.end p{color:var(--muted);font-size:14.5px;margin:0 0 6px}
+.fp{font-size:11px;color:#a7a59c;text-align:center;padding:10px calc(10px + env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom))}
+.fp b{color:#8a5a1c}
+</style></head><body>
+<div class="phone">
+ <div class="top"><span class="brand">HP ScorePilot</span><span class="prog" id="prog"></span></div>
+ <div class="body" id="body"></div>
+ <div class="fp"><b>TESTBUILD</b> · Slice v2 · v0.3 · 2026-05-25 · redo för begriplighetstest (ej "fungerar/höjer poäng")</div>
+</div>
+<script>
+/* Slice v2 v0.3 — fixar per GPT_CONTENT_AUDIT 2026-05-25:
+   (1) heroByPick per fråga — hero validerar aldrig falskt ett fel svar (neutral fallback annars);
+   (2) LÄS använder FULLA korpus-passagen (Caroline §5-passad — provenance ren);
+   (3) ORD ovillkorlig transfer → o·möjlig/o·vänlig; (4) "Bra —" borttaget;
+   (5) DTK transfer samma riktning; (6) NOG-steg ramade som tillräcklighet.
+   T1-redo: feedback ligger modulärt. STATUS: UTKAST — kräver NY grind (GPT re-audit + Caroline §5) före elevtest. */
+const Q=[
+{sub:"ORD",stem:"påtaglig",hint:"Vilket ord betyder ungefär detsamma som <b>påtaglig</b>?",
+ opts:[["A","märkbar"],["B","väsentlig"],["C","uppenbar"],["D","påhittad"],["E","framträdande"]],correct:"A",
+ hero:"Det här handlar om exakt nyans — alternativen lurar på olika sätt.",
+ heroByPick:{D:"Här lurar ordets form mer än betydelsen."},
+ err:{B:"'väsentlig' handlar om att något är <i>viktigt</i> — inte om att det märks.",C:"'uppenbar' är starkare: tydligt direkt, utan eftertanke. 'påtaglig' är mer 'kännbar'.",D:"Här lurar formen — 'påhittad' liknar i stavning men betyder <i>uppdiktad</i>.",E:"'framträdande' = sticker ut och syns mycket — inte samma som kännbar/märkbar."},
+ right:"påtaglig = märkbar.",rule:"Nästa gång: ställ ordet mot alternativen och fråga vilket som träffar den exakta nyansen — inte bara rätt område.",
+ steps:"'påtaglig' = något man tydligt känner eller märker — konkret och handfast.<br>Ställ det mot de andra:<br>• väsentlig = viktig (vikt, inte märkbarhet)<br>• uppenbar = tydlig direkt (starkare)<br>• framträdande = sticker ut (syns mycket)<br>• påhittad = uppdiktad (formen lurar)<br>Bara <b>märkbar</b> träffar 'kännbar / märkbar'.",
+ tt:"Knepet för ORD-ord du nästan kan: jämför alternativen mot varandra och hitta den exakta nyansen.",
+ okwhy:"Just det — 'märkbar' fångar att något känns och märks tydligt."},
+
+{sub:"KVA",stem:"x > 3",hint:"<b>Kvantitet I:</b> 3x − 4 &nbsp;·&nbsp; <b>Kvantitet II:</b> 2x − 1<br><span style='color:var(--muted)'>(Kvantitet I och II = det första och andra uttrycket.)</span> Vilken är störst?",
+ opts:[["A","I är större än II"],["B","II är större än I"],["C","I är lika med II"],["D","Otillräcklig information"]],correct:"A",
+ hero:"Nyckeln är att jämföra uttrycken och låta villkoret avgöra.",
+ heroByPick:{B:"Du jämförde rätt saker — men riktningen vände.",C:"Du var på rätt spår — men ett räknefel gjorde att uttrycken såg lika ut.",D:"Nyckeln är att använda villkoret x > 3 — det räcker för att avgöra."},
+ err:{B:"Men det blev omvänt — du landade i att det andra uttrycket är störst.",C:"Men ett räknefel fick uttrycken att se lika stora ut.",D:"Men villkoret x > 3 räcker för att avgöra."},
+ right:"Det första uttrycket (I) är större — svar A.",rule:"Nästa gång: ta det första uttrycket minus det andra, och låt villkoret (x > 3) avgöra om svaret blir positivt eller negativt.",
+ steps:"1. Ta uttryck I minus uttryck II.<br>2. (3x − 4) − (2x − 1) = <b>x − 3</b>.<br>3. Villkoret säger x > 3.<br>4. Då är x − 3 större än noll.<br>5. Alltså är uttryck I större.",
+ tt:"Testa samma knep: I = 4x, II = 3x + 3 → I minus II = x − 3, som är större än noll när x > 3.",
+ okwhy:"Just det — I minus II blir x − 3, som är större än noll när x > 3."},
+
+{sub:"LÄS",stem:"Vilket av följande påståenden stöds av texten?",hint:"",
+ passage:"<b>Vildbiernas situation i Sverige</b><p>Under de senaste decennierna har den biologiska mångfalden bland vilda bin i Sverige minskat i en takt som oroar ekologer och naturvårdare. Sverige hyser en relativt artrik bifauna med omkring 270 identifierade arter, varav flertalet lever solitärt och saknar den komplexa kolonistruktur som kännetecknar honungsbin. Till skillnad från det domesticerade honungsbiet, som odlats och förflyttats av människan i tusentals år, är de flesta vilda biarter helt beroende av stabila naturliga livsmiljöer: blomrika gräsmarker, sandiga och sydexponerade jordar samt äldre träd med naturliga hål och sprickor.</p><p>Det enskilt allvarligaste hotet är enligt forskare det intensiva jordbrukets expansion. Bekämpningsmedel av typen neonikotinoider, som används för att skydda grödor mot skadeinsekter, har i kontrollerade studier knutits till nedsatt navigationsförmåga, störd fortplantning och i vissa fall direkt dödlighet hos vilda biarter. Utöver de direkta kemiska effekterna leder storskalig odling till att blomrika betesmarker och gräsmarker ersätts av enformiga monokulturer, vilket drastiskt minskar tillgången på nektar och pollen under stora delar av säsongen.</p><p>Fragmentering av landskap utgör ett kompletterande hot. En population av vilda bin som geografiskt isoleras från angränsande livsmiljöer kan inte utbyta genetiskt material med andra kolonier, vilket ökar risken för inavel och på sikt lokalt utdöende. Svenska biologer betonar att sammanhängande stråk av blomrik vegetation — gröna korridorer — är avgörande för att upprätthålla kontakten mellan annars isolerade naturmiljöer.</p><p>Vilda bin är också av påtaglig ekonomisk betydelse. Pollinering av lantbruksgrödor beräknas bidra med flermiljardsbelopp till den svenska ekonomin varje år. Studier visar att en hög artmångfald bland pollinatörer ger en mer stabil och effektiv pollinering än om ansvaret vilar enbart på honungsbin, dels eftersom olika biarter är aktiva under skilda delar av säsongen, dels eftersom de reagerar olika på temperaturvariationer och väderlek.</p><p>På policynivå har Sverige infört begränsningar för neonikotinoider på blommande grödor, men forskarsamhället är splittrat om huruvida dessa åtgärder är tillräckliga. Flertalet biologer menar att en varaktig vändning av trenden kräver breda strukturella insatser: mer extensivt brukade jordbruksmarker, aktiv restaurering av historiska slåtterängar och en sammanhållen planering av gröna korridorer på landskapsnivå.</p>",
+ opts:[["A","Neonikotinoider har knutits till störd fortplantning hos vilda bin, och en hög artmångfald bland pollinatörer ger en stabilare pollinering än om ansvaret vilar enbart på honungsbin."],["B","Vilda bin är beroende av stabila naturliga livsmiljöer, och ekonomiska förluster anges som den viktigaste drivkraften bakom de svenska restriktionerna mot neonikotinoider."],["C","Storskalig odling minskar tillgången på nektar och pollen, och texten pekar ut monokulturer snarare än kemikalier som den främsta orsaken till minskningen av vilda bin."],["D","Gröna korridorer är avgörande för att hålla samman isolerade naturmiljöer, och fragmentering av landskap är enligt texten det allvarligaste hotet mot vilda bin."]],correct:"A",
+ hero:"Pröva varje led i påståendet mot texten.",
+ heroByPick:{B:"Första ledet stämmer — men pröva det andra ledet mot texten.",C:"Rätt stycke — men kolla exakt vad texten säger om orsakerna.",D:"Rätt ämne — men kolla hur starkt texten väger fragmentering."},
+ err:{B:"Första ledet stämmer, men texten anger inte ekonomiska förluster som den viktigaste drivkraften bakom restriktionerna.",C:"Texten beskriver kemikalier <i>och</i> monokulturer tillsammans — den rangordnar inte monokulturer över kemikalier.",D:"Texten kallar fragmentering ett <i>kompletterande</i> hot — jordbrukets expansion är det allvarligaste."},
+ right:"A — båda leden går att belägga i texten.",rule:"Nästa gång: pröva varje led i påståendet mot texten — stämmer båda halvorna?",
+ steps:"Steg 1: hitta meningen som stödjer varje led.<br>Steg 2: stämmer den exakt — inte starkare, inte omvänt?<br>Steg 3: rätt svar är det där <b>båda</b> leden håller. A:s båda led står i texten; B, C och D har vart sitt led som inte håller.",
+ tt:"A går att peka på: stycket om neonikotinoider + stycket om artmångfald.",
+ okwhy:"Just det — både neonikotinoid-ledet och artmångfalds-ledet går att belägga i texten."},
+
+{sub:"NOG",stem:"Hur mycket tjänar Lisa per månad?",hint:"(1) Ahmed tjänar 7 % mindre än Lisa; Ahmed tjänar 27 900 kr. &nbsp;·&nbsp; (2) Lisa tjänar 20 % mer än förra året; förra året 25 000 kr.<br><span style='color:var(--muted)'>(NOG frågar inte vad svaret blir — utan om informationen <b>räcker</b> för att kunna svara.)</span>",
+ opts:[["A","Tillräckligt i (1) men ej i (2)"],["B","Tillräckligt i (2) men ej i (1)"],["C","Tillräckligt i (1) och (2) tillsammans"],["D","Tillräckligt i (1) och (2) var för sig"],["E","Inte tillräckligt ens med båda"]],correct:"D",
+ hero:"NOG frågar om informationen räcker — pröva ett påstående i taget.",
+ heroByPick:{A:"Du prövade (1) på rätt sätt — men även (2) räcker ensam.",B:"Du prövade (2) på rätt sätt — men även (1) räcker ensam.",C:"Du såg att de räcker tillsammans — nu gäller om var och en räcker ensam.",E:"Fällan här är att underskatta — båda räcker faktiskt var för sig."},
+ err:{A:"Du prövade om (1) räcker — men testa (2) ensamt också; räcker den också?",B:"Du prövade om (2) räcker — men testa (1) ensamt också.",C:"Du såg att båda <i>tillsammans</i> räcker — men pröva vart för sig: räcker (1) ensam? räcker (2) ensam?",E:"Men var och en räcker faktiskt ensam — så det är inte 'otillräckligt'."},
+ right:"D — var och en räcker ensam.",rule:"Nästa gång: täck över ett påstående i taget och fråga 'räcker det här ensamt för att svara?'.",
+ steps:"Pröva tillräcklighet, ett påstående i taget:<br>• (1) ensam: Ahmed (27 900) är 7 % mindre än Lisa → Lisas lön går att bestämma. Räcker ✓<br>• (2) ensam: förra årets lön (25 000) är känd och årets är 20 % högre → årets lön går att bestämma. Räcker ✓<br>Båda räcker var för sig → <b>D</b>. Poängen är att de <i>räcker</i> — inte själva summan.",
+ tt:"Regeln i NOG: du löser inte talet — du prövar om informationen räcker för att kunna lösa det.",
+ okwhy:"Just det — var och en av uppgifterna räcker ensam för att avgöra lönen, så svaret går att bestämma var för sig."},
+
+{sub:"DTK",stem:"Hur många fler patientbesök gjordes i mars än i januari?",hint:"",
+ table:[["Januari","3 240"],["Februari","2 980"],["Mars","3 560"]],
+ opts:[["A","320"],["B","580"],["C","330"],["D","3 560"]],correct:"A",
+ hero:"Här gäller det att skilja på råvärde och skillnad.",
+ heroByPick:{B:"Rätt operation — men fel månadspar.",C:"Rätt rader — men ett räknefel i subtraktionen.",D:"Här tog du råvärdet för mars — frågan vill ha skillnaden."},
+ err:{B:"Du tog mars − februari (3 560 − 2 980 = 580). Frågan gäller mars mot januari.",C:"Rätt rader, men ett litet räknefel i subtraktionen.",D:"Det är råvärdet för mars — frågan vill ha skillnaden."},
+ right:"320.",rule:"Nästa gång: ringa in de rader frågan nämner <i>först</i>.",
+ steps:"1. Frågans poster: mars och januari.<br>2. Rader: 3 560 och 3 240.<br>3. 3 560 − 3 240 = <b>320</b>.",
+ tt:"Testa samma grepp: hur många fler i mars än februari? 3 560 − 2 980 = 580.",
+ okwhy:"Just det — 3 560 − 3 240 = 320."},
+
+{sub:"ORD",stem:"ovillkorlig",hint:"Vilket ord betyder ungefär detsamma som <b>ovillkorlig</b>?",
+ opts:[["A","villkorslös"],["B","undantagslös"],["C","bindande"],["D","tvingande"],["E","kategorisk"]],correct:"A",
+ hero:"Här hjälper det att dela upp ordet i delar.",
+ err:{B:"'undantagslös' = utan <i>undantag</i> — nära, men handlar om undantag, inte om villkor.",C:"'bindande' = något som måste hållas, som ett avtal — men säger inget om att det saknar villkor.",D:"'tvingande' = påbjudet (t.ex. av lag) — inte 'utan villkor'.",E:"'kategorisk' = bestämd och absolut i tonen — inte villkorslös."},
+ right:"villkorslös (A).",rule:"Nästa gång ett ord känns genomskinligt: dela det i delar och läs ihop betydelsen.",
+ steps:"Dela upp ordet: o + villkor + lig.<br>'o-' betyder <b>utan</b>. 'villkor' = krav eller förutsättning.<br>Alltså: <b>utan villkor</b> = villkorslös.<br>Som i 'ovillkorlig kapitulation' — man ger upp utan några krav eller förbehåll.",
+ tt:"Testa samma grepp på enkla ord: o·möjlig = inte möjlig, o·vänlig = inte vänlig.",
+ okwhy:"Just det — o + villkor = utan villkor = villkorslös."}
+];
+
+let i=0;
+const body=document.getElementById('body'),prog=document.getElementById('prog');
+function render(){
+ const q=Q[i];prog.textContent=`Fråga ${i+1}/${Q.length}`;
+ let h=`<span class="subtag">${q.sub}</span><p class="stem">${q.stem}</p>`;
+ if(q.hint)h+=`<p class="hint">${q.hint}</p>`;
+ if(q.passage)h+=`<div class="passage">${q.passage}</div>`;
+ if(q.table){h+=`<table class="dtk"><tr><th>Månad</th><th>Antal besök</th></tr>`;q.table.forEach(r=>h+=`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`);h+=`</table>`}
+ h+=`<div id="opts">`;
+ q.opts.forEach(o=>h+=`<button class="opt" data-l="${o[0]}"><span class="lab">${o[0]}</span>${o[1]}</button>`);
+ h+=`</div><div id="fb"></div>`;
+ body.innerHTML=h;
+ document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>answer(b.dataset.l));
+}
+function answer(pick){
+ const q=Q[i];const correct=pick===q.correct;
+ document.querySelectorAll('.opt').forEach(b=>{
+   b.onclick=null;b.classList.add('dim');
+   if(b.dataset.l===q.correct)b.classList.remove('dim'),b.classList.add('is-correct');
+   if(b.dataset.l===pick&&!correct)b.classList.remove('dim'),b.classList.add('picked-wrong');
+ });
+ const fb=document.getElementById('fb');const last=i===Q.length-1;
+ const ctaLabel=last?'Klart — så kändes loopen':(correct?'Nästa fråga':'Fortsätt med rätt fokus');
+ if(correct){
+   fb.innerHTML=`<div class="fb correct"><p class="hero">Rätt.</p><p class="err">${q.okwhy}</p><button class="cta" id="next">${ctaLabel}</button></div>`;
+ }else{
+   const errline=q.err[pick]||"Inte riktigt — kolla tanken bakom.";
+   const opener=(q.heroByPick&&q.heroByPick[pick])||q.hero;
+   fb.innerHTML=`<div class="fb">
+     <p class="hero">${opener}</p>
+     <p class="err">${errline}</p>
+     <p class="rightline">Rätt: <b>${q.right}</b></p>
+     <p class="nextrule">${q.rule}</p>
+     <button class="show" id="show">Visa hur ▾</button>
+     <div class="deep" id="deep"><p class="steps">${q.steps}</p><p class="tt">${q.tt}</p></div>
+     <button class="cta" id="next">${ctaLabel}</button></div>`;
+   document.getElementById('show').onclick=function(){
+     const d=document.getElementById('deep');d.classList.toggle('open');
+     this.textContent=d.classList.contains('open')?'Dölj ▴':'Visa hur ▾';
+   };
+ }
+ document.getElementById('next').onclick=()=>{ if(last){end()}else{i++;render();window.scrollTo(0,0)} };
+ fb.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function end(){
+ prog.textContent='';
+ body.innerHTML=`<div class="end"><h2>Klart</h2>
+  <p>Du gick igenom 6 frågor över fem typer.</p>
+  <p style="margin-top:16px"><b>Frågan till dig:</b> kändes det som en coach — eller som en rättningsskärm?</p>
+  <button class="cta" style="max-width:240px;margin:18px auto 0" onclick="i=0;render()">Börja om</button></div>`;
+}
+render();
+</script></body></html>

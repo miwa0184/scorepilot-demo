@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="sv"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ScorePilot">
+<meta name="theme-color" content="#185fa5">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23185fa5'/%3E%3Ctext x='32' y='43' font-size='30' font-family='Helvetica' font-weight='bold' fill='white' text-anchor='middle'%3EHP%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23185fa5'/%3E%3Ctext x='32' y='43' font-size='30' font-family='Helvetica' font-weight='bold' fill='white' text-anchor='middle'%3EHP%3C/text%3E%3C/svg%3E">
+<title>HP ScorePilot</title>
+<style>
+:root{--bg:#f4f3ef;--card:#fff;--ink:#1c1c1a;--muted:#6f6e68;--line:#e6e4dd;--accent:#185fa5;--accent-bg:#eaf1fb;
+--ok:#0f6e56;--ok-bg:#e4f5ee;--warm:#8a5a1c;--warm-bg:#faf1e0;--root:#534ab7;--root-bg:#eeedfe;}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);line-height:1.5}
+.phone{max-width:480px;margin:0 auto;background:var(--card);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;padding:max(16px,env(safe-area-inset-top)) 20px 10px;border-bottom:1px solid var(--line)}
+.brand{font-weight:600;font-size:15px}
+.prog{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.body{padding:20px;flex:1}
+.subtag{display:inline-block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--accent-bg);border-radius:6px;padding:3px 9px;margin-bottom:12px;font-weight:600}
+.stem{font-size:19px;font-weight:600;margin:0 0 6px;line-height:1.35}
+.hint{font-size:13.5px;color:#3b3a36;margin:0 0 14px;line-height:1.6}
+.hint b{font-weight:600}
+.passage{font-size:13.5px;color:#3b3a36;background:#faf9f6;border:1px solid var(--line);border-radius:10px;padding:12px 13px;margin:0 0 14px;max-height:210px;overflow:auto;line-height:1.5}
+.passage p{margin:0 0 8px}.passage b{font-weight:600}
+table.dtk{width:100%;border-collapse:collapse;font-size:14px;margin:0 0 14px}
+table.dtk td,table.dtk th{border:1px solid var(--line);padding:7px 10px;text-align:left}
+table.dtk th{background:#faf9f6}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 15px;margin-bottom:9px;font-size:15.5px;cursor:pointer;transition:border-color .12s,background .12s;color:var(--ink)}
+.opt:active{background:#f3f1ec}
+.opt .lab{font-weight:600;color:var(--muted);margin-right:9px}
+.opt.dim{opacity:.4}
+.opt.picked-wrong{border-color:var(--warm);background:var(--warm-bg)}
+.opt.is-correct{border-color:var(--ok);background:var(--ok-bg)}
+.fb{margin-top:6px;border-radius:14px;padding:16px 16px 6px;background:#fbfaf7;border:1px solid var(--line);animation:rise .18s ease}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.fb.correct{background:var(--ok-bg);border-color:#bfe6d6}
+.hero{font-size:17px;font-weight:600;margin:0 0 8px;line-height:1.35}
+.err{font-size:15px;margin:0 0 12px}
+.core{font-size:15px;margin:0 0 12px;padding:12px 13px;background:var(--accent-bg);border-radius:11px;line-height:1.55}
+.core .lbl{display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:5px}
+.core b{font-weight:600}
+.rightline{font-size:13px;color:var(--muted);margin:0 0 10px}
+.rightline b{color:var(--ink)}
+.nextrule{font-size:15px;margin:0 0 14px;padding-left:11px;border-left:3px solid var(--root);color:#332e6b}
+.show{background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;padding:0 0 12px}
+.deep{display:none;border-top:1px dashed var(--line);padding-top:12px;margin-bottom:6px}
+.deep.open{display:block;animation:rise .18s ease}
+.deep .steps{font-size:14.5px;margin:0 0 10px;line-height:1.6}
+.deep .tt{font-size:13.5px;color:#0f6e56;background:var(--ok-bg);border-radius:9px;padding:9px 11px;margin:0}
+.cta{display:block;width:100%;background:var(--ink);color:#fff;border:none;border-radius:13px;padding:15px;font-size:15.5px;font-weight:600;cursor:pointer;margin-top:6px}
+.cta:active{opacity:.85}
+.end{text-align:center;padding:40px 14px}
+.end h2{font-size:22px;margin:0 0 8px}
+.end p{color:var(--muted);font-size:14.5px;margin:0 0 6px}
+.fp{font-size:11px;color:#a7a59c;text-align:center;padding:10px calc(10px + env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom))}
+.fp b{color:#8a5a1c}
+</style></head><body>
+<div class="phone">
+ <div class="top"><span class="brand">HP ScorePilot</span><span class="prog" id="prog"></span></div>
+ <div class="body" id="body"></div>
+ <div class="fp"><b>TESTBUILD</b> · Slice v2 · T0 v2 (färska frågor) · UX v0 · 2026-05-25 · redo för begriplighetstest (ej "fungerar/höjer poäng")</div>
+</div>
+<script>
+/* Slice v2 — T0 v2 FÄRSKT SLICE (osett av Thilde), Feedback Card v2 / Feedback Loop UX v0.
+   Samma medicin/feedback-motor som v0.3 (branchad heroByPick — hero validerar aldrig falskt ett fel svar;
+   neutral fallback annars). FRÅGORNA orörda: fresh-batch v0.2 (4 frågor), GPT_CONTENT_AUDIT WARN (inga blockers)
+   + Caroline §5 PASS för T0 (0 FAIL). UX v0-ändringar (founder + GPT 2026-05-25, rör EJ frågorna/facit):
+   (1) CTA = ren navigation "Nästa fråga" (ej coachfras); (2) KÄRNMEDICINEN syns direkt — ny "Det som avgör"-ruta
+   (KVA: två testvärden synliga; NOG: ensam/ensam/tillsammans synligt); (3) endast FÖRDJUPNING bakom expand,
+   omdöpt "Visa steg för steg"; (4) NOG (1)/(2) på egna rader. Princip: kärnmedicin synlig, fördjupning får vara gömd.
+   STATUS: TESTBUILD — claim-limit "redo för begriplighetstest". Omstrukturerad copy bör få en snabb GPT cold-read före Thilde. */
+const Q=[
+{sub:"ORD",stem:"vidsträckt",hint:"Vilket ord betyder ungefär detsamma som <b>vidsträckt</b>?",
+ opts:[["A","omfattande"],["B","avlägsen"],["C","djup"],["D","tillfällig"],["E","otydlig"]],correct:"A",
+ hero:"Här hjälper både ordets delar och hur ordet används.",
+ heroByPick:{B:"Här lurar 'vid' dig mot avstånd — men vidsträckt handlar om hur <i>brett</i> något sträcker sig."},
+ err:{B:"'avlägsen' = långt bort — 'vid' lurar mot avstånd, men vidsträckt handlar om bredd/omfång, inte om hur långt bort något är.",C:"'djup' handlar om en annan riktning — vidsträckt är om bredd/omfång, inte djup.",D:"'tillfällig' = varar kort — ett helt annat fält än utbredning.",E:"'otydlig' handlar om klarhet, inte om omfång."},
+ core:"Ett <b>vidsträckt</b> landskap breder ut sig brett och långt — ordet handlar om hur stor <b>utsträckning</b> något har.",
+ right:"vidsträckt = omfattande.",rule:"Nästa gång: testa både ordets delar och hur ordet brukar användas.",
+ steps:"Dela upp: <b>vid + sträckt</b>.<br>'vid' = bred; 'sträckt' = utsträckt, sträcker sig.<br>Alltså: <b>sträcker sig brett/långt</b> = stor utsträckning = omfattande.",
+ tt:"Samma grepp: vid·sträckt = brett utsträckt; lång·varig = varar länge.",
+ okwhy:"Just det — vid + sträckt = stor utsträckning = omfattande."},
+
+{sub:"ORD",stem:"lakonisk",hint:"Vilket ord betyder ungefär detsamma som <b>lakonisk</b>?",
+ opts:[["A","kortfattad"],["B","pratsam"],["C","oklar"],["D","högtidlig"],["E","sarkastisk"]],correct:"A",
+ hero:"Det här handlar om exakt nyans — alternativen ligger nära på olika sätt.",
+ heroByPick:{B:"'pratsam' är nästan motsatsen — lakonisk handlar om <i>få</i> ord."},
+ err:{B:"'pratsam' är nästan motsatsen — lakonisk betyder få ord, inte många.",C:"'oklar' lurar: lakonisk är kort, men inte otydlig — kort <i>och</i> kärnfull.",D:"'högtidlig' = formell/ceremoniell — ett annat fält.",E:"'sarkastisk' — lakoniska svar kan kännas torra, men sarkasm är något annat."},
+ core:"<b>Lakonisk</b> = kort och rakt på sak: mycket sagt med <b>få ord</b>, men tydligt.",
+ right:"lakonisk = kortfattad.",rule:"Nästa gång: jämför alternativen mot varandra och leta efter den exakta betydelsen.",
+ steps:"Ställ ordet mot de andra:<br>• pratsam = många ord (motsats)<br>• oklar = otydlig (men lakonisk är kort, inte otydlig)<br>• högtidlig = formell<br>• sarkastisk = stickande<br>Bara <b>kortfattad</b> träffar 'få ord, kärnfullt'.",
+ tt:"När du nästan kan ordet: jämför alternativen och leta efter den exakta nyansen.",
+ okwhy:"Just det — att säga mycket med få ord = kortfattad."},
+
+{sub:"KVA",stem:"x > 0",hint:"<b>Kvantitet I:</b> 1/x<br><b>Kvantitet II:</b> x<br><span style='color:var(--muted)'>(Kvantitet I och II = det första och andra uttrycket.)</span> Vilken är störst?",
+ opts:[["A","I är större än II"],["B","II är större än I"],["C","I är lika med II"],["D","informationen är otillräcklig"]],correct:"D",
+ hero:"Här gäller det att testa mer än ett tal — svaret kan växla.",
+ heroByPick:{A:"Det stämmer när x ligger mellan 0 och 1 — men inte när x är större än 1.",B:"Det stämmer när x är större än 1 — men inte när x ligger mellan 0 och 1.",C:"Lika gäller vid x = 1 — men villkoret tillåter fler värden."},
+ err:{A:"Stämmer när x ligger mellan 0 och 1, men inte när x är större än 1 — svaret växlar.",B:"Stämmer när x är större än 1, men inte när x ligger mellan 0 och 1 — svaret växlar.",C:"Lika gäller bara precis vid x = 1."},
+ core:"Testa x = 1/2 → 1/x = 2, så <b>Kvantitet I</b> är störst.<br>Testa x = 2 → 1/x = 1/2, så <b>Kvantitet II</b> är störst.<br>Svaret <b>växlar</b> — då går det inte att avgöra.",
+ right:"informationen är otillräcklig (D).",rule:"Nästa gång: testa två olika tillåtna värden. Om svaret växlar räcker informationen inte.",
+ steps:"1. Jämför 1/x och x för x &gt; 0.<br>2. Testa x = 2: 1/x = 1/2, x = 2 → <b>Kvantitet II</b> är störst.<br>3. Testa x = 1/2: 1/x = 2, x = 1/2 → <b>Kvantitet I</b> är störst.<br>4. Svaret växlar beroende på vilket x — villkoret x &gt; 0 räcker inte.<br>5. → <b>informationen är otillräcklig (D)</b>.",
+ tt:"Metod: testa minst två tillåtna värden. Växlar svaret → informationen räcker inte.",
+ okwhy:"Just det — när x är större än 1 är x störst, när x ligger mellan 0 och 1 är 1/x störst → går inte att avgöra → D."},
+
+{sub:"NOG",stem:"Hur många elever går i klass 9B?",hint:"(1) Det går 3 fler flickor än pojkar i klassen.<br>(2) Det går 14 flickor i klassen.<br><span style='color:var(--muted)'>Tillräcklig information för lösningen erhålls:</span>",
+ opts:[["A","i (1) men ej i (2)"],["B","i (2) men ej i (1)"],["C","i (1) tillsammans med (2)"],["D","i (1) och (2) var för sig"],["E","ej genom de båda påståendena"]],correct:"C",
+ hero:"NOG frågar om informationen räcker — pröva ett påstående i taget, sedan tillsammans.",
+ heroByPick:{A:"Du prövade (1) — men ensam ger den inget antal; testa om (2) behövs.",B:"Du prövade (2) — men ensam saknar du pojkarna; testa om (1) behövs.",D:"Var för sig räcker ingen — men pröva om de räcker <i>tillsammans</i>.",E:"Här är fällan att stanna för tidigt — var för sig räcker de inte, men tillsammans gör de det."},
+ err:{A:"(1) ensam: flickor = pojkar + 3 — inget faktiskt antal. Räcker inte ensam.",B:"(2) ensam: 14 flickor men inget om pojkarna — inget totalt. Räcker inte ensam.",D:"Var för sig räcker ingen — men tillsammans går det. Pröva kombinationen.",E:"Du landade i att inte ens båda räcker — men kombinationen löser det."},
+ core:"(1) räcker inte ensam.<br>(2) räcker inte ensam.<br>Men <b>tillsammans</b> räcker de.",
+ right:"C — i (1) tillsammans med (2).",rule:"Nästa gång: pröva först varje påstående ensamt, sedan tillsammans.",
+ steps:"• (1) ensam: flickor = pojkar + 3 → inget antal. Räcker inte.<br>• (2) ensam: 14 flickor, pojkar okända → inget totalt. Räcker inte.<br>• Tillsammans: flickor = 14 → pojkar = 14 − 3 = 11 → totalt går att bestämma. Räcker ✓ → <b>C</b>.<br>Poängen är att kombinationen <i>räcker</i> — inte själva totalen.",
+ tt:"I NOG: pröva först varje påstående ensamt, sedan tillsammans, och fråga 'räcker det för att kunna svara?'.",
+ okwhy:"Just det — varken (1) eller (2) räcker ensam, men tillsammans går antalet att bestämma → C."}
+];
+
+let i=0;
+const body=document.getElementById('body'),prog=document.getElementById('prog');
+function render(){
+ const q=Q[i];prog.textContent=`Fråga ${i+1}/${Q.length}`;
+ let h=`<span class="subtag">${q.sub}</span><p class="stem">${q.stem}</p>`;
+ if(q.hint)h+=`<p class="hint">${q.hint}</p>`;
+ if(q.passage)h+=`<div class="passage">${q.passage}</div>`;
+ if(q.table){h+=`<table class="dtk"><tr><th>Månad</th><th>Antal besök</th></tr>`;q.table.forEach(r=>h+=`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`);h+=`</table>`}
+ h+=`<div id="opts">`;
+ q.opts.forEach(o=>h+=`<button class="opt" data-l="${o[0]}"><span class="lab">${o[0]}</span>${o[1]}</button>`);
+ h+=`</div><div id="fb"></div>`;
+ body.innerHTML=h;
+ document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>answer(b.dataset.l));
+}
+function answer(pick){
+ const q=Q[i];const correct=pick===q.correct;
+ document.querySelectorAll('.opt').forEach(b=>{
+   b.onclick=null;b.classList.add('dim');
+   if(b.dataset.l===q.correct)b.classList.remove('dim'),b.classList.add('is-correct');
+   if(b.dataset.l===pick&&!correct)b.classList.remove('dim'),b.classList.add('picked-wrong');
+ });
+ const fb=document.getElementById('fb');const last=i===Q.length-1;
+ const ctaLabel=last?'Klar — visa sammanfattning':'Nästa fråga';
+ if(correct){
+   fb.innerHTML=`<div class="fb correct"><p class="hero">Rätt.</p><p class="err">${q.okwhy}</p><button class="cta" id="next">${ctaLabel}</button></div>`;
+ }else{
+   const errline=q.err[pick]||"Inte riktigt — kolla tanken bakom.";
+   const opener=(q.heroByPick&&q.heroByPick[pick])||q.hero;
+   const coreBlock=q.core?`<div class="core"><span class="lbl">Det som avgör</span>${q.core}</div>`:``;
+   fb.innerHTML=`<div class="fb">
+     <p class="hero">${opener}</p>
+     <p class="err">${errline}</p>
+     ${coreBlock}
+     <p class="rightline">Rätt: <b>${q.right}</b></p>
+     <p class="nextrule">${q.rule}</p>
+     <button class="show" id="show">Visa steg för steg ▾</button>
+     <div class="deep" id="deep"><p class="steps">${q.steps}</p><p class="tt">${q.tt}</p></div>
+     <button class="cta" id="next">${ctaLabel}</button></div>`;
+   document.getElementById('show').onclick=function(){
+     const d=document.getElementById('deep');d.classList.toggle('open');
+     this.textContent=d.classList.contains('open')?'Dölj ▴':'Visa steg för steg ▾';
+   };
+ }
+ document.getElementById('next').onclick=()=>{ if(last){end()}else{i++;render();window.scrollTo(0,0)} };
+ fb.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function end(){
+ prog.textContent='';
+ body.innerHTML=`<div class="end"><h2>Klart</h2>
+  <p>Du gick igenom 4 frågor över tre typer.</p>
+  <p style="margin-top:16px"><b>Frågan till dig:</b> kändes det som en coach — eller som en rättningsskärm?</p>
+  <button class="cta" style="max-width:240px;margin:18px auto 0" onclick="i=0;render()">Börja om</button></div>`;
+}
+render();
+</script></body></html>
